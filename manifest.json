@@ -7,13 +7,19 @@
     "content_scripts": [
         {
             "matches": ["https://*/tmui/Control/*"],
-            "css": ["css/todo.css"],
+            "css": ["css/poolimprovements.css"],
             "js": [
                 "settings/settings.js",
                 "js/lib/jquery-3.3.1.min.js",
                 "js/lib/balloon.js",
                 "js/lib/waitForStorageKey.js",
                 "js/lib/addPartitionFilter.js",
+                "js/lib/dataGroupListImprovements.js",
+                "js/lib/genericFunctions.js",
+                "js/lib/virtualServerImprovements.js",
+                "js/lib/poolImprovements.js",
+                "js/lib/sslProfileImprovements.js",
+                "js/lib/iRuleImprovements.js",
                 "js/lib/christmas.js",
                 "js/lib/ltmLogParser.js",
                 "js/lib/getStorage.js",
@@ -28,6 +34,7 @@
                 "js/lib/jquery-3.3.1.min.js",
                 "js/lib/setStorage.js",
                 "js/lib/getStorage.js",
+                "js/lib/genericFunctions.js",
                 "js/lib/waitForSelector.js",
                 "js/lib/getVersion.js"
             ],
