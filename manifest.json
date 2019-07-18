@@ -9,9 +9,11 @@
             "matches": ["https://*/tmui/Control/*"],
             "css": ["css/todo.css"],
             "js": [
+                "settings/settings.js",
                 "js/lib/jquery-3.3.1.min.js",
                 "js/lib/balloon.js",
                 "js/lib/waitForStorageKey.js",
+                "js/lib/addPartitionFilter.js",
                 "js/lib/christmas.js",
                 "js/lib/ltmLogParser.js",
                 "js/lib/getStorage.js",
