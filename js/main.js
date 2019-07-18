@@ -342,13 +342,12 @@ var enhancementFunctions = {
 
 var majorVersion = null;
 
-
-console.log("Waiting for version info");
+debug("Waiting for version info");
 waitForStorageKey('majorVersion').then(async () => {
     
     let version = await getStorage('majorVersion')
     
-    console.log("Got version info.");
+    debug("Got version info.");
     majorVersion = version.majorVersion;
 
     initiateBaloon();

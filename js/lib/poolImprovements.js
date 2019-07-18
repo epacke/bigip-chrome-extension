@@ -4,50 +4,87 @@
 *
 **************************************************************************/
 
-function improvePoolList(){
+async function getURL(url){
+
+    return new Promise((resolve, reject) => {
+        $.ajax({
+
+            url: url,
+            type: "GET",
+            success: response => resolve(response),
+            error: e => reject(e)
+        })
+    })
+
+}
+
+// Check when the loading screen for pools has disappears and then show a member statuses.
+async function showLoadingMessage(message){
+
+    let messageDiv = $(parent.top.document).find("div#message");
+
+    return new Promise((resolve, reject) => {
+        var statusInterval = setInterval(function(){
+        
+            if(!(messageDiv.is(":visible"))){
+                console.log(messageDiv);
+                messageDiv.html(`
+                    <div id="messagetype" class="type loading"><div class="indicator"></div>
+                    <div id="messagetitle" class="title">Loading...</div>
+                    <div id="messagetext" class="text">${message}</div></div>
+                `)
+                messageDiv.show();
+                clearInterval(statusInterval);
+                resolve();
+            }
+        }, 100);
+    })
+    
+
+}
+
+async function improvePoolList(){
 
     var poolStatuses = {}
-    var oldMessage = $(parent.top.document).find("div#message div#messagetype div#messagetext").text();
- 
-    // Check when the loading screen for pools has disappears and then show a member statuses.
-    var statusInterval = setInterval(function(){
-        if(!$(parent.top.document).find("div#message").is(":visible")){
-            $(parent.top.document).find("div#message div#messagetype div#messagetext").text("Loading member statuses...");
-            $(parent.top.document).find("div#message").show();
-            clearInterval(statusInterval);
-        }
-    } , 100);
- 
-    $.ajax({
-        
-        url: "https://" + window.location.host + "/tmui/Control/jspmap/tmui/locallb/pool/stats.jsp?SearchString=*&",
-        type: "GET",
-        success: function(response) {
- 
-            $(response).find("tbody#list_body tr")
-            .filter(function() {
-                return this.id.match(/\/.+\//);
-            })
-            .each(function(){
- 
-                var poolName = this.id.replace(/_member_row_[0-9]+$/i, "");
- 
-                if(!(poolName in poolStatuses)){
-                    poolStatuses[poolName] = {};
-                }
- 
-                var memberName = $(this).find("td").eq(3).text().trim();
-                var statusIcon = $(this).find("td").eq(1).find("img").attr("src");
-                var title = $(this).find("td").eq(1).find("img").attr("title");
- 
-                poolStatuses[poolName][memberName] = { "icon": statusIcon, "title": title };
- 
-            });
+    
+    let messageDiv = $(parent.top.document).find("div#message");
+
+    await showLoadingMessage("Loading member statuses...");
+    var response = await getURL("https://" + window.location.host + "/tmui/Control/jspmap/tmui/locallb/pool/stats.jsp?SearchString=*&");
+
+    messageDiv.fadeOut()
+
+    $(response).find("tbody#list_body tr")
+        .filter(function() {
+            return /\/.+\//.test(this.id);
+        })
+        .each(function(){
+
+            var poolName = this.id.replace(/_member_row_[0-9]+$/, "");
+
+            if(!(poolName in poolStatuses)){
+                poolStatuses[poolName] = {};
+            }
+
+            let columns = $(this).find("td");
+            let memberName = columns.eq(3).text().trim();
+            let statusIconCell = columns.eq(1).find("img")
+            let statusIconSrc = statusIconCell.attr("src");
+            let title = statusIconCell.attr("title");
+            let totalConnections = parseInt(columns.eq(11).text());
+
+            poolStatuses[poolName][memberName] = { "icon": statusIconSrc, "title": title, "totalConnections": totalConnections };
+
+        });
  
             $("tbody#list_body tr").each(function(){
- 
-                var poolName = $(this).find("td").eq(2).find("a").attr("href").replace(/.+name=/i, "");
-                var existingIcons = [];
+                
+                let poolRow = $(this);
+                let poolColumns = poolRow.find("td")
+                let poolName = poolColumns.eq(2).find("a").attr("href").replace(/.+name=/i, "");
+                let poolIconCell = poolColumns.eq(1);
+
+                let existingIcons = [];
  
                 if(poolName in poolStatuses){
  
@@ -61,73 +98,75 @@ function improvePoolList(){
  
                     if(existingIcons.length > 1){
  
-                        var html = "<div data-poolname=\"" + poolName + "\" class=\"tamperpoolstatus\" style=\"margin-left:21px;margin-bottom:15px;\">";
+                        var poolStatusIconHTML = `<div data-poolname="${poolName}" class="tamperpoolstatus" style="margin-left:21px;margin-bottom:15px;">`;
  
                         for(var i = 0; i < existingIcons.length; i++){
  
-                            iconURL = existingIcons[i].replace(/\/.*_/i, "/tmui/tmui/skins/Default/images/status_circle_");
- 
+                            let iconURL = existingIcons[i].replace(/\/.*_/i, '/tmui/tmui/skins/Default/images/status_circle_');
+                            
+                            // Boy is this a hack
+                            // It adds the different icon states in different layers depending on how many different pool states there are
+
                             switch (i){
                                 case 0:
-                                    html += "<div style=\"z-index:1;position:absolute;max-width:6.7px;overflow:hidden;\"><img src=\"" + iconURL + "\"/></div>"
+                                    poolStatusIconHTML += `<div style="z-index:1;position:absolute;max-width:6.7px;overflow:hidden;"><img src="${iconURL}"/></div>`;
                                     break;
                                 case 1:
-                                    html += "<div style=\"z-index:1;position:absolute;left:6.7px;max-width:6.5px;overflow:hidden;direction:rtl;\"><img src=\"" + iconURL + "\"/></div>"
+                                    poolStatusIconHTML += `<div style="z-index:1;position:absolute;left:6.7px;max-width:6.5px;overflow:hidden;direction:rtl;"><img src="${iconURL}"/></div>`;
                                     break;
                                 case 2:
-                                    html += "<div style=\"z-index:2;position:absolute;max-height:7.5px;left:0.2px;overflow:hidden;\"><img src=\"" + iconURL + "\"/></div>"
+                                    poolStatusIconHTML += `<div style="z-index:2;position:absolute;max-height:7.5px;left:0.2px;overflow:hidden;"><img src="${iconURL}"/></div>`;
                                     break;
                                 case 3:
-                                    html += "<div style=\"z-index:4;position:absolute;max-width:6.5px;max-height:7.5px;overflow:hidden;\"><img src=\"/tmui/tmui/skins/Default/images/status_circle_blue.png\"/></div>"
+                                    poolStatusIconHTML += '<div style="z-index:4;position:absolute;max-width:6.5px;max-height:7.5px;overflow:hidden;"><img src="/tmui/tmui/skins/Default/images/status_circle_blue.png"/></div>';
                                     break;
                             }
                         }
  
-                        html += "</div>";
- 
-                        $(this).find("td").eq(1).html(html);
+                        poolStatusIconHTML += '</div>';
+                        
+                        poolIconCell.html(poolStatusIconHTML);
  
                     } else {
-                        var html = "<div data-poolname=\"" + poolName + "\" style=\"position:relative;padding-top:1px\"><img src=\"" + existingIcons + "\"/></div>"
-                        $(this).find("td").eq(1).html(html);
+                        var poolStatusIconHTML = `<div data-poolname="${poolName}" style="position:relative;padding-top:1px"><img src="${existingIcons}"/></div>`;
+                        poolIconCell.html(poolStatusIconHTML);
                     }
  
-                    $(this).find("td").eq(1).find("div").on("mouseover", function(){
+                    poolIconCell.find('div').on('mouseover', function(){
                         poolName = $(this).attr("data-poolname");
  
                         if(poolName in poolStatuses){
  
-                            var table = "<div class=\"tamperpoolstatus\"><table class=\"list\" style=\"opacity:1\"><thead id=\"list_header\"><tr class=\"columnhead\"><td></td><td>Member</td><td>Status</td></tr></thead><tbody>";
+                            var table = '<div class="tamperpoolstatus"><table class="list" style="opacity:1"><thead id="list_header"><tr class="columnhead"><td></td><td>Member</td><td>Status</td></tr></thead><tbody>';
                             memberStatuses = poolStatuses[poolName];
  
                             var i = 0;
  
                             for(member in memberStatuses){
-                                table += "<tr class=\"color" + ((i%2)+1) + "\"><td align=\"center\"><img src=\"" + memberStatuses[member].icon + "\"/></td><td>" + member + "</td><td>" + memberStatuses[member].title + "</td></tr>";
+                                table += `<tr class="color${((i%2)+1)}"><td align="center"><img src="${memberStatuses[member].icon}"/></td><td>${member}</td><td>${memberStatuses[member].title}</td></tr>`;
                                 i++;
                             }
  
-                            table += "</tbody></table></div>";
+                            table += '</tbody></table></div>';
  
-                            $(this).balloon({ position: "right", css: { whitespace: "nowrap", boxShadow: null, opacity: "1", padding: "0px", border: "0px", background: "rgba(0, 0, 255,1)" }, minLifetime: 0, tipSize:0, showDuration: 0, hideDuration: 0, contents: table });
+                            $(this).balloon({ position: 'right', css: { whitespace: 'nowrap', boxShadow: null, opacity: '1', padding: '0px', border: '0px', background: 'rgba(0, 0, 255,1)' }, minLifetime: 0, tipSize:0, showDuration: 0, hideDuration: 0, contents: table });
                         }
                     });
  
-                    //For some reason I need to trigger this at least one ahead of time in order to get the popup to show on the first attempt
-                    $(this).find("td").eq(1).find("div").trigger("mouseover");
-                    $(this).find("td").eq(1).find("div").trigger("mouseout");
+                    // For some reason I need to
+                    // * Trigger this at least one ahead of time in order to get the popup to show on the first attempt
+                    // * Not cache the jQuery selector or it will show the state of the last pool
+                    $(this).find('td').eq(1).find('div').trigger('mouseover');
+                    $(this).find('td').eq(1).find('div').trigger('mouseout');
  
                 }
             })
  
-            $(parent.top.document).find("div#message").fadeOut(function(){
-                $(parent.top.document).find("div#message div#messagetype div#messagetext").text(oldMessage);
-            });
+
  
         }
-    })
  
- }
+ 
  
  
  function improvePoolProperties(){
