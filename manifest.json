@@ -1,6 +1,6 @@
 {
     "name": "ADC Tweaks",
-    "version": "0.0.0.1",
+    "version": "0.0.0.2",
     "description": "Tweaks for the F5 Web Interface",
     "permissions": ["activeTab", "storage"],
     "short_name": "ADCTweaks",
@@ -13,6 +13,7 @@
                 "js/lib/balloon.js",
                 "js/lib/waitForStorageKey.js",
                 "js/lib/christmas.js",
+                "js/lib/ltmLogParser.js",
                 "js/lib/getStorage.js",
                 "js/main.js"
             ],
