@@ -131,3 +131,6 @@ String.prototype.hashCode = function(){
     return uri.indexOf(s) >= 0;
  }
  
+function debug (m) {
+    console.log(`Location: ${window.location} Message: ${m}`);
+}

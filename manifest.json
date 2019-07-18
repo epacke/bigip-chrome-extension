@@ -6,7 +6,22 @@
     "short_name": "ADCTweaks",
     "content_scripts": [
         {
-            "matches": ["https://*/tmui/Control/*"],
+            "matches": [
+                "https://*/tmui/Control/*",
+                "https://*/tmui/Control/jspmap/tmui/locallb/pool/list.jsp*",
+                "https://*/tmui/Control/jspmap/tmui/locallb/rule/properties.jsp*",
+                "https://*/tmui/Control/form?__handler=/tmui/locallb/virtual_server/resources&__source=Manage*",
+                "https://*/tmui/Control/jspmap/tmui/locallb/pool/properties.jsp?name*",
+                "https://*/tmui/Control/jspmap/tmui/locallb/pool/create.jsp*",
+                "https://*/tmui/Control/jspmap/tmui/locallb/pool/member/properties.jsp*",
+                "https://*/tmui/Control/jspmap/tmui/locallb/virtual_server/resources.jsp*",
+                "https://*/tmui/Control/jspmap/tmui/locallb/virtual_server/properties.jsp*",
+                "https://*/tmui/Control/jspmap/tmui/locallb/datagroup/properties.jsp*",
+                "https://*/tmui/Control/jspmap/tmui/locallb/datagroup/create.jsp*",
+                "https://*/tmui/Control/jspmap/tmui/locallb/profile/clientssl/create.jsp*",
+                "https://*/tmui/Control/jspmap/tmui/locallb/ssl_certificate/create.jsp*",
+                "https://*/tmui/Control/jspmap/tmui/overview/welcome/introduction.jsp*"
+            ],
             "css": ["css/poolimprovements.css"],
             "js": [
                 "settings/settings.js",
