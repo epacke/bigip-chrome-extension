@@ -1,0 +1,44 @@
+{
+    "name": "ADC Tweaks",
+    "version": "0.0.0.1",
+    "description": "Tweaks for the F5 Web Interface",
+    "permissions": ["activeTab", "storage"],
+    "short_name": "ADCTweaks",
+    "content_scripts": [
+        {
+            "matches": ["https://*/tmui/Control/*"],
+            "css": ["css/todo.css"],
+            "js": [
+                "js/lib/jquery-3.3.1.min.js",
+                "js/lib/balloon.js",
+                "js/lib/waitForStorageKey.js",
+                "js/lib/christmas.js",
+                "js/lib/getStorage.js",
+                "js/main.js"
+            ],
+            "run_at": "document_idle",
+            "all_frames": true
+        },{
+            "matches": ["https://*/xui/*"],
+            "js": [
+                "settings/settings.js",
+                "js/lib/jquery-3.3.1.min.js",
+                "js/lib/setStorage.js",
+                "js/lib/getStorage.js",
+                "js/lib/waitForSelector.js",
+                "js/lib/getVersion.js"
+            ],
+            "run_at": "document_idle"
+        }
+      ],
+    "web_accessible_resources": [
+        "images/link.png"
+    ],
+    "icons": {
+        "16": "images/icon16.png",
+        "32": "images/icon32.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+      },
+    "manifest_version": 2
+}
