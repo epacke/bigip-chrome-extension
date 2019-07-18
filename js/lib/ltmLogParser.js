@@ -1,4 +1,55 @@
-
+var ltmLogPatterns = {
+    "poolFailures": new function(){
+        this.enabled = true;
+        this.name = "Pool failures";
+        this.isMatching = function(event){
+            return(event.logEvent.match(/^Pool.+monitor status down/) !== null);
+        }
+    },
+    "nodeFailures": new function(){
+        this.enabled = true;
+        this.name = "Node failures";
+        this.isMatching = function(event){
+            return(event.logEvent.match(/^Node.+monitor status down/) !== null);
+        }
+    },
+    "errors": new function(){
+        this.enabled = true;
+        this.name = "Errors";
+        this.isMatching = function(event){
+            return(event.logLevel === "error");
+        }
+    },
+    "warnings": new function(){
+        this.enabled = true;
+        this.name = "Warnings";
+        this.isMatching = function(event){
+            return(event.logLevel === "warning");
+        }
+    },
+    "tclErrors": new function(){
+        this.enabled = true;
+        this.name = "TCL Errors";
+        this.isMatching = function(event){
+            return(event.logEvent.match(/^TCL error/) !== null);
+        }
+    },
+    "aggressiveMode": new function(){
+        this.enabled = true;
+        this.name = "Aggressive Mode"
+        this.isMatching = function(event){
+            return(event.logEvent.match(/aggressive mode activated/) !== null);
+        }
+    },
+    "addressConflicts": new function(){
+        this.enabled = true;
+        this.name = "Address Conflicts"
+        this.isMatching = function(event){
+            return(event.logEvent.match(/address conflict detected for/) !== null);
+        }
+    }
+ }
+ 
 
 function startLTMLogFetcher(){
 
