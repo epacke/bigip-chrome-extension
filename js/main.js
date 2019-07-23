@@ -1,4 +1,4 @@
-//Make sure that the tampermonkey jQuery does not tamper with F5's scripts
+//Make sure that the extensions jQuery does not tamper with F5's scripts
 this.$ = this.jQuery = jQuery.noConflict(true);
 
 //Declare global ajax queue limit
@@ -8,8 +8,6 @@ var detectedarr = [];
 var poolStatuses;
 
 var logDatabase;
-
-
 
 var enhancementFunctions = {
 

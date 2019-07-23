@@ -1,9 +1,10 @@
 {
     "name": "ADC Tweaks",
-    "version": "0.0.0.2",
+    "version": "0.0.0.4",
     "description": "Tweaks for the F5 Web Interface",
-    "permissions": ["activeTab", "storage"],
+    "optional_permissions": ["activeTab", "storage"],
     "short_name": "ADCTweaks",
+    "homepage_url": "https://loadbalancing.se/webui-tweaks-manual/",
     "content_scripts": [
         {
             "matches": [
