@@ -1,56 +1,64 @@
-var ltmLogPatterns = {
-    "poolFailures": new function(){
+
+// Define the types to search for and their patterns
+var ltmLogPatterns = [
+    new function(){
+        this.name = 'Pool failures';
         this.enabled = true;
-        this.name = "Pool failures";
         this.isMatching = function(event){
-            return(event.logEvent.match(/^Pool.+monitor status down/) !== null);
+            return(/^Pool.+monitor status down/.test(event.logEvent))
         }
     },
-    "nodeFailures": new function(){
+    new function(){
+        this.name = 'Node failures';
         this.enabled = true;
-        this.name = "Node failures";
         this.isMatching = function(event){
-            return(event.logEvent.match(/^Node.+monitor status down/) !== null);
+            return(/^Node.+monitor status down/.test(event.logEvent));
         }
     },
-    "errors": new function(){
+    new function(){
+        this.name = 'Errors';
         this.enabled = true;
-        this.name = "Errors";
         this.isMatching = function(event){
-            return(event.logLevel === "error");
+            return(event.logLevel === 'error');
         }
     },
-    "warnings": new function(){
+    new function(){
+        this.name = 'Warnings';
         this.enabled = true;
-        this.name = "Warnings";
         this.isMatching = function(event){
-            return(event.logLevel === "warning");
+            return(event.logLevel === 'warning');
         }
     },
-    "tclErrors": new function(){
+    new function(){
+        this.name = 'TCL Errors';
         this.enabled = true;
-        this.name = "TCL Errors";
         this.isMatching = function(event){
-            return(event.logEvent.match(/^TCL error/) !== null);
+            return(/^TCL error/.test(event.logEvent));
         }
     },
-    "aggressiveMode": new function(){
+    new function(){
+        this.name = 'Aggressive Mode';
         this.enabled = true;
-        this.name = "Aggressive Mode"
         this.isMatching = function(event){
-            return(event.logEvent.match(/aggressive mode activated/) !== null);
+            return(/aggressive mode activated/.test(event.logEvent));
         }
     },
-    "addressConflicts": new function(){
+    new function(){
+        this.name = 'Address Conflicts';
         this.enabled = true;
-        this.name = "Address Conflicts"
         this.isMatching = function(event){
-            return(event.logEvent.match(/address conflict detected for/) !== null);
+            return(/address conflict detected for/.test(event.logEvent));
         }
     }
- }
- 
+]
 
+
+function startLTMLogFetcher() {
+    initiateLTMLogStatistics();
+}
+
+
+/*
 function startLTMLogFetcher(){
 
     //Check if the database contains anything
@@ -72,19 +80,22 @@ function startLTMLogFetcher(){
             url: "https://" + window.location.host + "/tmui/Control/jspmap/tmui/system/log/list_ltm.jsp",
             type: "GET",
             success: function(response) {
+
+                let debugTable = []
                 $(response).find("table.list tbody tr").each(function(){
  
                     var message = {}
  
-                    var row = $(this).find("td");
+                    var columns = $(this).find("td");
  
-                    message.timeStamp = $(row[0]).text().trim();
-                    message.logLevel = $(row[1]).text().trim();
-                    message.host = $(row[2]).text().trim();
-                    message.service = $(row[3]).text().trim();
-                    message.statusCode = $(row[4]).text().trim();
-                    message.logEvent = $(row[5]).text().trim();
- 
+                    message.timeStamp = $(columns[0]).text().trim();
+                    message.logLevel = $(columns[1]).text().trim();
+                    message.host = $(columns[2]).text().trim();
+                    message.service = $(columns[3]).text().trim();
+                    message.statusCode = $(columns[4]).text().trim();
+                    message.logEvent = $(columns[5]).text().trim();
+                    
+                    debugTable.push(message)
                     var data = "";
                     for(var i in message){
                         data += message[i]
@@ -96,6 +107,8 @@ function startLTMLogFetcher(){
  
                     logDatabase.lastSynced = new Date();
                 })
+
+                console.table(debugTable)
  
                 updateLTMLogStatistics(getLTMLogStatisticsSummary(logDatabase));
                 localStorage.setItem("ltmLog", JSON.stringify(logDatabase));
@@ -108,11 +121,15 @@ function startLTMLogFetcher(){
     setInterval(fetchLTMLog, ltmLogCheckInterval*1000);
  }
  
+ */
+
+ 
+ // Initiates the div that holds the statistics
  function initiateLTMLogStatistics(){
  
     var topFrame = $(parent.top.document);
  
-    if(topFrame.find("div.ltmLogStats").length == 0){
+    if(topFrame.find('div.ltmLogStats').length == 0){
  
         var styleTag = $(`<style>
                                 .ltmLogStats {
@@ -128,23 +145,23 @@ function startLTMLogFetcher(){
  
         var parameterList = [];
  
-        for(var i in ltmLogPatterns){
+        for(var pattern of ltmLogPatterns){
  
             if(parameterList.length == 2){
-                html += `<div class="ltmLogStats" id="ltmLogStats">` + parameterList.join("") + `</div>`
+                html += `<div class="ltmLogStats" id="ltmLogStats">${parameterList.join("")}</div>`;
                 parameterList = [];
             }
  
             parameterList.push(`
-                    <div class="" id="logStats` + i + `">
-                        <label>` + ltmLogPatterns[i].name + `:</label>
+                    <div class="" id="logStats${pattern.name.replace(/ +/,'')}">
+                        <label>${pattern.name}:</label>
                         <span>Loading...</span>
                     </div>`
             );
         }
  
         if(parameterList.length != 0){
-            html += `<div class="ltmLogStats">` + parameterList.join("") + `</div>`
+            html += `<div class="ltmLogStats">${parameterList.join("")}</div>`;
         }
  
         topFrame.find("div#userinfo").last().after(html);
@@ -152,7 +169,9 @@ function startLTMLogFetcher(){
     }
  
  }
+
  
+/*
  function updateLTMLogStatistics(summary){
  
     var topFrame = $(parent.top.document);
@@ -176,6 +195,7 @@ function startLTMLogFetcher(){
     var summary = {};
     var events = logDatabase.content;
  
+    // Initiate an object with enabled functions as key and a value of 0
     for(var f in ltmLogPatterns){
         var logTest = ltmLogPatterns[f];
         if(logTest.enabled){
@@ -188,11 +208,13 @@ function startLTMLogFetcher(){
         var event = events[i];
  
         for(functionName in ltmLogPatterns){
- 
+
             var f = ltmLogPatterns[functionName];
-            if(f.isMatching(event)){
+
+            if(f.enabled && f.isMatching(event)){
                 summary[functionName]++;
             }
+
         }
  
     }
@@ -200,4 +222,4 @@ function startLTMLogFetcher(){
     return(summary);
  
  }
- 
+ */
