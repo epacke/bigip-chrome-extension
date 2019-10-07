@@ -318,22 +318,6 @@ var enhancementFunctions = {
 
        this.enhance = addCSRDropDownMenu;
 
-   }, "addLTMLogSummary": new function(){
-       this.name = "LTM log features";
-       this.description = `<ul>
-                               <li>Adds information from the LTM log to the top bar</li>
-                               <li>Shows pool failures in the pool list</li>
-                           </ul>`;
-       this.enabled = true;
-       this.appliesToVersion = ["12", "13", "14"];
-
-       this.applicable = function(){
-           return uriContains("/tmui/Control/jspmap/tmui/overview/welcome/introduction.jsp")
-               && this.appliesToVersion.indexOf(majorVersion) != -1
-               && this.enabled;
-       };
-
-       this.enhance = startLTMLogFetcher;
    }
 
 }

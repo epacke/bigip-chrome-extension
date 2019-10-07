@@ -1,6 +1,6 @@
 {
     "name": "ADC Tweaks",
-    "version": "0.0.0.4",
+    "version": "0.0.0.5",
     "description": "Tweaks for the F5 Web Interface",
     "permissions": ["activeTab", "storage"],
     "short_name": "ADCTweaks",
@@ -37,7 +37,7 @@
                 "js/lib/sslProfileImprovements.js",
                 "js/lib/iRuleImprovements.js",
                 "js/lib/christmas.js",
-                "js/lib/ltmLogParser.js",
+                "js/lib/LTMLogStatistics/LTMLogStatistics.js",
                 "js/lib/getStorage.js",
                 "js/main.js"
             ],
