@@ -187,6 +187,7 @@ async function startLogStatistics(){
     if(topFrame.find('div.ltmLogStats').length == 0){
         let LTMLogs = new LTMLogStatistics(ltmStatsPatterns);
         await LTMLogs.readLog();
+        LTMLogs.generateStats();
         setInterval(function(){
             LTMLogs.generateStats();
         }, 30000);
