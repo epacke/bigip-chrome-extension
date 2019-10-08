@@ -27,7 +27,6 @@ async function showLoadingMessage(message){
         var statusInterval = setInterval(function(){
         
             if(!(messageDiv.is(":visible"))){
-                console.log(messageDiv);
                 messageDiv.html(`
                     <div id="messagetype" class="type loading"><div class="indicator"></div>
                     <div id="messagetitle" class="title">Loading...</div>
