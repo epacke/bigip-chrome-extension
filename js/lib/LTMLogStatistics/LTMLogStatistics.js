@@ -170,7 +170,7 @@ async function startLogStatistics(){
         await LTMLogs.readLog();
         setInterval(function(){
             LTMLogs.generateStats();
-        }, 10000);
+        }, 30000);
     }
 }
 
