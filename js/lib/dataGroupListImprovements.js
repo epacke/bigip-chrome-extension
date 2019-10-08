@@ -9,6 +9,8 @@
 function improveDataGroupListEditing(){
     //Increase the size of the lists
     $("select").not("#datagroup_type_select").attr("size", DatagroupListCount);
+    $("div#div_records table#records tbody tr td table").css("width", "100%");
+    $("div#div_records table#records tbody tr td table select").css("width", "100%");
  
     //Add extra cell and buttons for bulk import
     $("table#records thead tr.tablehead td").after(`<td>
