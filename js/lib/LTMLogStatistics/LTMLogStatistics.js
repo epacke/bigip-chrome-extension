@@ -1,3 +1,5 @@
+'use strict';
+
 class LTMLogStatistics {
 
     constructor (patterns){
@@ -71,6 +73,7 @@ class LTMLogStatistics {
             5: 'event'
         }
 
+        this.logEvents = [];
         let logTableBody = $(logContent).find('div#section_div table tbody#list_body');
         logTableBody.find('tr').each((index, row) => {
             let entry = {};
@@ -80,10 +83,11 @@ class LTMLogStatistics {
             });
             this.logEvents.push(entry);
         });
+
     }
 
     // Updates the stats at the top frame
-    updateStats(stats){
+    async updateStats(stats){
         let topFrame = $(parent.top.document);
         for(let s in stats){
             topFrame.find(`span#logstats-${s}`).text(stats[s]).fadeOut(500).fadeIn(500);
@@ -106,11 +110,14 @@ class LTMLogStatistics {
 
         for(let event of this.logEvents){
             for(let pattern of this.patterns){
-                if(pattern.isMatching(event)){ stats[pattern.statsName]++ };
+                if(pattern.isMatching(event)){
+                    stats[pattern.statsName]++;
+                }
             }
         }
 
-        this.updateStats(stats);
+        await this.updateStats(stats);
+
     }
     
 }

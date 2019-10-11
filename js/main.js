@@ -31,4 +31,3 @@ waitForStorageKey('majorVersion').then(async () => {
     }
 
 })
-

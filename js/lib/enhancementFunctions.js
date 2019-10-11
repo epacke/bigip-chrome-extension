@@ -206,7 +206,8 @@ var enhancementFunctions = {
  
         this.applicable = function(){
             return (uriContains("/tmui/Control/jspmap/tmui/locallb/datagroup/properties.jsp")
-                || uriContains("/tmui/Control/jspmap/tmui/locallb/datagroup/create.jsp"))
+                || uriContains("/tmui/Control/jspmap/tmui/locallb/datagroup/create.jsp")
+                || uriContains("/tmui/Control/form?__handler=/tmui/locallb/datagroup/properties"))
                 && this.appliesToVersion.indexOf(majorVersion) != -1
                 && this.enabled;
         };
